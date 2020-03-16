@@ -22,15 +22,15 @@ pub fn establish_connection() -> MysqlConnection {
 
 use models::{Post, NewPost};
 
-pub fn create_post<'a>(conn: &MysqlConnection, title: &'a str, body: &'a str) -> Post {
+pub fn create_post(conn: &MysqlConnection, user_id: i64, body: &str) -> Post {
     use self::schema::posts::dsl::{id, posts};
 
-    let post = NewPost { title, body };
+    let post = NewPost { user_id, body };
 
     diesel::insert_into(posts)
         .values(&post)
         .execute(conn)
-        .expect("Error savind new post");
+        .expect("Error saving new post");
 
     posts.order(id.desc()).first(conn).unwrap()
 }
