@@ -8,7 +8,7 @@ API Rest escrita em Rust
   - Instalação do Diesel:
     `cargo install diesel_cli --no-default-features --features mysql`
     (Obs.: O Diesel usa algumas bibliotecas compartilhadas em C. 
-    A instalação no sistema operação dessas bibliotecas pode necessária.)
+    A instalação no sistema operacional dessas bibliotecas pode ser necessária.)
   
   - Na raiz do projeto, copie o arquivo `.env.example` para `.env` 
     e adicione suas credenciais de banco de dados, host e porta para a API.
@@ -180,6 +180,14 @@ API Rest escrita em Rust
     ```
  
 * **Error Response:**
+
+  * **Code:** 404 <br/>
+    **Content:** 
+    ```(json)
+        {
+          "message": "Tweet not found"
+        }
+    ```
 
   * **Code:** 500 INTERNAL SERVER ERROR <br />
     **Content:**

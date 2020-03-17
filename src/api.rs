@@ -14,7 +14,11 @@ pub async fn user_tweets(params: web::Path<TweetParams>) -> impl Responder {
     let user = users.find(params.user).get_result::<User>(&conn).expect("User not found");
     let results = Post::belonging_to(&user).load::<Post>(&conn).expect("Error loading posts");
 
-    HttpResponse::Ok().json(results)
+    if results.len() > 0 {
+        return HttpResponse::Ok().json(results);
+    }
+
+    HttpResponse::InternalServerError().body("Some error happened. Check your .ENV configs")
 }
 
 // Exibe um tweet especifico
@@ -28,7 +32,11 @@ pub async fn user_get_tweet(params: web::Path<GetTweetParams>) -> impl Responder
     let user = users.find(params.user).get_result::<User>(&conn).expect("User not found");
     let results = Post::belonging_to(&user).filter(id.eq(params.tweet)).load::<Post>(&conn).expect("Error loading posts");
 
-    HttpResponse::Ok().json(results.first())
+    return if results.len() <= 0 {
+        HttpResponse::NotFound().json(Message { message: "Tweet not found".to_string() })
+    } else {
+        HttpResponse::Ok().json(results)
+    };
 }
 
 // Cria um novo tweet
@@ -49,6 +57,11 @@ pub struct TweetParams {
 pub struct GetTweetParams {
     user: i64,
     tweet: i64,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Message {
+    message: String
 }
 
 #[derive(Deserialize)]
