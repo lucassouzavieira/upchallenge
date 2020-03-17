@@ -1,7 +1,7 @@
 use std::env;
 use dotenv::dotenv;
-use api::user_tweets;
-use actix_web::{middleware, web, App, HttpServer};
+use api::{user_tweets, user_get_tweet, user_post_tweet};
+use actix_web::{middleware, web, App, HttpServer, guard, HttpResponse};
 
 mod api;
 
@@ -22,10 +22,17 @@ async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_BACKTRACE", "1");
     env_logger::init();
 
+    // Server
     HttpServer::new(|| {
         App::new()
             // enable logger
             .wrap(middleware::Logger::default())
-            .service(web::scope("/api/v1").service(user_tweets))
+            .service(user_tweets)
+            .service(user_get_tweet)
+            .service(user_post_tweet)
+            .default_service(
+                web::route().guard(guard::Not(guard::Get()))
+                    .to(|| HttpResponse::NotFound())
+            )
     }).bind(format!("{}:{}", host, port))?.run().await
 }

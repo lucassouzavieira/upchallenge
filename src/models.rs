@@ -26,7 +26,7 @@ pub struct NewUser<'a> {
 
 #[derive(Insertable, Associations)]
 #[table_name = "posts"]
-pub struct NewPost<'a> {
+pub struct NewPost {
     pub user_id: i64,
-    pub body: &'a str,
+    pub body: String,
 }

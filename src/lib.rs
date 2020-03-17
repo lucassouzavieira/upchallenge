@@ -22,10 +22,10 @@ pub fn establish_connection() -> MysqlConnection {
 
 use models::{Post, NewPost};
 
-pub fn create_post(conn: &MysqlConnection, user_id: i64, body: &str) -> Post {
+pub fn create_post(conn: &MysqlConnection, user_id: i64, body: String) -> Post {
     use self::schema::posts::dsl::{id, posts};
 
-    let post = NewPost { user_id, body };
+    let post = NewPost { user_id, body: body.to_string() };
 
     diesel::insert_into(posts)
         .values(&post)
